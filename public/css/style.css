@@ -1,0 +1,36 @@
+
+@-webkit-keyframes spinner {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes spinner {
+        from {
+            /* transform: rotate(0deg); */
+            transform: rotateZ(0deg);
+        }
+        to {
+            /* transform: rotate(360deg); */
+            transform: rotateZ(360deg);
+        }
+}
+
+
+#spinning {
+    -webkit-animation: 1s linear infinite spinner;
+    animation: 2s linear infinite spinner;
+    font-size: 2rem;
+}
+a {
+    color: rgb(200,100,150);
+    font-weight: bold;
+    transition: color .2s linear;
+}
+a:hover {
+    text-decoration: none;
+    color: rgb(150,100, 200);
+}
