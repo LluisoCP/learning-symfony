@@ -9,7 +9,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
+use App\Entity\Category;
+use App\Repository\CategoryRepository;
+use Symfony\Component\Serializer\SerializerInterface;
 /**
  * @Route("/product")
  */
@@ -53,20 +55,37 @@ class ProductController extends AbstractController
      */
     public function search()
     {
-        return $this->render('product/search_price.html.twig');
+        $category_repository = $this->getDoctrine()->getRepository(Category::class);
+        $categories = $category_repository->findAll();
+        return $this->render('product/search_price.html.twig', [
+            'categories' => $categories
+        ]);
     }
 
     /**
      * @Route("/results", name="results", methods={"GET"})
      */
-    public function results(Request $request, ProductRepository $product_repository)
+    public function results(Request $request, ProductRepository $product_repository, CategoryRepository $category_repository, SerializerInterface $serializer)
     {
-        $price = $request->query->get('price');
-        $order = $request->query->get('order');
-
-        $products = $product_repository->findByPriceOrdered($price, $order);
+        $price          = $request->query->get('price');
+        $order          = $request->query->get('order');
+        $category_id    = $request->query->get('category_id');
+        if ( $category_id != null )
+        {
+            $category = $category_repository->find($category_id);
+            $products = $product_repository->findByPriceAndCategoryOrdered($price, $category, $order);
+        }
+        else
+        {
+            $products = $product_repository->findByPriceOrdered($price, $order);
+        }
+        $jsonProducts = $serializer->serialize($products, 'json', [
+            'circular_reference_handler' => function($object) {
+                return $object->getId();
+            }
+        ]);
         
-        return $this->json($products);
+        return new Response($jsonProducts, 200, ['Content-Type' => 'application/json']);
     }
 
     /**

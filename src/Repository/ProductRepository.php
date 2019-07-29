@@ -33,7 +33,21 @@ class ProductRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
-
+    /**
+     * @return Product[] Returns an array of Product objects
+     */
+    public function findByPriceAndCategoryOrdered($price, $category, $order='ASC')
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.price <= :pri')
+            ->setParameter('pri', $price)
+            ->andWhere('p.category = :cat')
+            ->setParameter('cat', $category)
+            ->orderBy('p.price', $order)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
     /*
     public function findOneBySomeField($value): ?Product
     {

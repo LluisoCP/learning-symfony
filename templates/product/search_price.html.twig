@@ -14,6 +14,24 @@
             <div class="col-8 offset-2">
                 <h4 class="text-center mt-3">Set the terms for your search</h4>
                 <div>
+                    {% if categories %}
+                        
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="by_category">
+                                <label class="form-check-label" for="by_category">
+                                    Search by category
+                                </label>
+                            </div>
+                                <select id="category_choice" name="category" class="custom-select" disabled>
+                                    <option id="default" selected>Select a category</option>
+                                    {% for category in categories %}
+                                    <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                        </div>
+
+                    {% endif %}
                     <div id="price-form" class="form-group">
                         <label for="price">Max price</label>
                         <input id="price" name="price" type="text" class="form-control">
